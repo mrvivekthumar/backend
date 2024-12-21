@@ -23,6 +23,10 @@ const ArtImagesSchema = new mongoose.Schema(
         artImage: {
             type: String,
         },
+        status: {
+            type: String,
+            enum: ["Draft", "Published"],
+        },
         price: {
             type: Number,
             min: [0, "Price cannot be negative"],

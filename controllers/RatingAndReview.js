@@ -1,6 +1,6 @@
 const RatingAndReview = require("../models/RatingAndReview");
-const Course = require("../models/Course");
-const { mongo, default: mongoose } = require("mongoose");
+const ArtImages = require("../models/ArtImages");
+const mongoose = require("mongoose");
 const logger = require('../utils/logger');  // Adjust the path as needed
 
 // createRating
@@ -9,40 +9,40 @@ exports.createRating = async (req, res) => {
         // get user id
         const userId = req.user.id;
         // fetch data from req body
-        const { rating, review, courseId } = req.body;
+        const { rating, review, artImagesId } = req.body;
         // check if user is enrolled or not
-        const courseDetails = await Course.findOne({
-            _id: courseId,
+        const artImagesDetails = await ArtImages.findOne({
+            _id: artImagesId,
             studentsEnrolled: { $elemMatch: { $eq: userId } },
         });
 
-        if (!courseDetails) {
+        if (!artImagesDetails) {
             return res.status(404).json({
                 success: false,
-                message: 'Student is not enrolled in the course',
+                message: 'Student is not enrolled in the artImages',
             });
         }
-        // check if user already reviewed the course
+        // check if user already reviewed the artImages
         const alreadyReviewed = await RatingAndReview.findOne({
             user: userId,
-            course: courseId,
+            artImages: artImagesId,
         });
         if (alreadyReviewed) {
             return res.status(403).json({
                 success: false,
-                message: 'Course is already reviewed by the user',
+                message: 'ArtImages is already reviewed by the user',
             });
         }
         // create rating and review
         const ratingReview = await RatingAndReview.create({
             rating, review,
-            course: courseId,
+            artImages: artImagesId,
             user: userId,
         });
 
-        // update course with this rating/review
-        const updatedCourseDetails = await Course.findByIdAndUpdate(
-            { _id: courseId },
+        // update artImages with this rating/review
+        const updatedArtImagesDetails = await ArtImages.findByIdAndUpdate(
+            { _id: artImagesId },
             {
                 $push: {
                     ratingAndReviews: ratingReview._id,
@@ -50,7 +50,7 @@ exports.createRating = async (req, res) => {
             },
             { new: true }
         );
-        logger.info(updatedCourseDetails);
+        logger.info(updatedArtImagesDetails);
         // return response
         return res.status(200).json({
             success: true,
@@ -69,13 +69,13 @@ exports.createRating = async (req, res) => {
 // getAverageRating
 exports.getAverageRating = async (req, res) => {
     try {
-        // get course ID
-        const courseId = req.body.courseId;
+        // get artImages ID
+        const artImagesId = req.body.artImagesId;
         // calculate avg rating
         const result = await RatingAndReview.aggregate([
             {
                 $match: {
-                    course: new mongoose.Types.ObjectId(courseId),
+                    artImages: new mongoose.Types.ObjectId(artImagesId),
                 },
             },
             {
@@ -119,8 +119,8 @@ exports.getAllRating = async (req, res) => {
                 select: "firstName lastName email image",
             })
             .populate({
-                path: "course",
-                select: "courseName",
+                path: "artImages",
+                select: "artImagesName",
             })
             .exec();
         return res.status(200).json({

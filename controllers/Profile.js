@@ -1,10 +1,9 @@
-const Course = require("../models/Course");
-const CourseProgress = require("../models/CourseProgess");
+const ArtImages = require("../models/ArtImages");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 const { convertSecondsToDuration } = require("../utils/secToDuration");
-const logger = require('../utils/logger'); // Adjust the path as needed
+const logger = require('../utils/logger');
 
 // Method for updating a profile
 exports.updateProfile = async (req, res) => {
@@ -64,7 +63,7 @@ exports.deleteAccount = async (req, res) => {
 		//      console.log("The answer to life, the universe, and everything!");
 		// });
 		// console.log(job);
-		
+
 		const id = req.user.id;
 		const user = await User.findById({ _id: id });
 		if (!user) {
@@ -120,6 +119,7 @@ exports.updateDisplayPicture = async (req, res) => {
 			1000
 		)
 		logger.info(image)
+
 		const updatedProfile = await User.findByIdAndUpdate(
 			{ _id: userId },
 			{ image: image.secure_url },
@@ -138,93 +138,93 @@ exports.updateDisplayPicture = async (req, res) => {
 	}
 };
 
-exports.getEnrolledCourses = async (req, res) => {
+// exports.getEnrolledCourses = async (req, res) => {
+// 	try {
+// 		const userId = req.user.id
+// 		let userDetails = await User.findOne({
+// 			_id: userId,
+// 		})
+// 			.populate({
+// 				path: "artImages",
+// 				populate: {
+// 					path: "courseContent",
+// 					populate: {
+// 						path: "subSection",
+// 					},
+// 				},
+// 			})
+// 			.exec()
+
+// 		userDetails = userDetails.toObject()
+// 		var SubsectionLength = 0
+// 		for (var i = 0; i < userDetails.artImages.length; i++) {
+// 			let totalDurationInSeconds = 0
+// 			SubsectionLength = 0
+// 			for (var j = 0; j < userDetails.artImages[i].courseContent.length; j++) {
+// 				totalDurationInSeconds += userDetails.artImages[i].courseContent[
+// 					j
+// 				].subSection.reduce((acc, curr) => acc + parseInt(curr.timeDuration), 0)
+// 				userDetails.artImages[i].totalDuration = convertSecondsToDuration(
+// 					totalDurationInSeconds
+// 				)
+// 				SubsectionLength +=
+// 					userDetails.artImages[i].courseContent[j].subSection.length
+// 			}
+// 			let courseProgressCount = await CourseProgress.findOne({
+// 				courseID: userDetails.artImages[i]._id,
+// 				userId: userId,
+// 			})
+// 			courseProgressCount = courseProgressCount?.completedVideos.length
+// 			if (SubsectionLength === 0) {
+// 				userDetails.artImages[i].progressPercentage = 100
+// 			} else {
+// 				// To make it up to 2 decimal point
+// 				const multiplier = Math.pow(10, 2)
+// 				userDetails.artImages[i].progressPercentage =
+// 					Math.round(
+// 						(courseProgressCount / SubsectionLength) * 100 * multiplier
+// 					) / multiplier
+// 			}
+// 		}
+
+// 		if (!userDetails) {
+// 			return res.status(400).json({
+// 				success: false,
+// 				message: `Could not find user with id: ${userDetails}`,
+// 			})
+// 		}
+// 		return res.status(200).json({
+// 			success: true,
+// 			data: userDetails.artImages,
+// 		})
+// 	} catch (error) {
+// 		return res.status(500).json({
+// 			success: false,
+// 			message: error.message,
+// 		})
+// 	}
+// }
+
+exports.artistDashboard = async (req, res) => {
 	try {
-		const userId = req.user.id
-		let userDetails = await User.findOne({
-			_id: userId,
-		})
-			.populate({
-				path: "courses",
-				populate: {
-					path: "courseContent",
-					populate: {
-						path: "subSection",
-					},
-				},
-			})
-			.exec()
+		const artImageDetails = await Artist.find({ artist: req.user.id });
 
-		userDetails = userDetails.toObject()
-		var SubsectionLength = 0
-		for (var i = 0; i < userDetails.courses.length; i++) {
-			let totalDurationInSeconds = 0
-			SubsectionLength = 0
-			for (var j = 0; j < userDetails.courses[i].courseContent.length; j++) {
-				totalDurationInSeconds += userDetails.courses[i].courseContent[
-					j
-				].subSection.reduce((acc, curr) => acc + parseInt(curr.timeDuration), 0)
-				userDetails.courses[i].totalDuration = convertSecondsToDuration(
-					totalDurationInSeconds
-				)
-				SubsectionLength +=
-					userDetails.courses[i].courseContent[j].subSection.length
-			}
-			let courseProgressCount = await CourseProgress.findOne({
-				courseID: userDetails.courses[i]._id,
-				userId: userId,
-			})
-			courseProgressCount = courseProgressCount?.completedVideos.length
-			if (SubsectionLength === 0) {
-				userDetails.courses[i].progressPercentage = 100
-			} else {
-				// To make it up to 2 decimal point
-				const multiplier = Math.pow(10, 2)
-				userDetails.courses[i].progressPercentage =
-					Math.round(
-						(courseProgressCount / SubsectionLength) * 100 * multiplier
-					) / multiplier
-			}
-		}
-
-		if (!userDetails) {
-			return res.status(400).json({
-				success: false,
-				message: `Could not find user with id: ${userDetails}`,
-			})
-		}
-		return res.status(200).json({
-			success: true,
-			data: userDetails.courses,
-		})
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error.message,
-		})
-	}
-}
-
-exports.instructorDashboard = async (req, res) => {
-	try {
-		const courseDetails = await Course.find({ instructor: req.user.id });
-
-		const courseData = courseDetails.map((course) => {
-			const totalStudentsEnrolled = course.studentsEnrolled.length
-			const totalAmountGenerated = totalStudentsEnrolled * course.price
+		const artImageData = artImageDetails.map((artImage) => {
+			const totalBuyersEnrolled = artImage.buyersEnrolled.length
+			const totalAmountGenerated = totalBuyersEnrolled * artImage.price
 
 			//create an new object with the additional fields
-			const courseDataWithStats = {
-				_id: course._id,
-				courseName: course.courseName,
-				courseDescription: course.courseDescription,
-				totalStudentsEnrolled,
+			const artImageDataWithStats = {
+				_id: artImage._id,
+				artImageName: artImage.artImageName,
+				artImageDescription: artImage.artImageDescription,
+				totalBuyersEnrolled,
 				totalAmountGenerated,
 			}
-			return courseDataWithStats
+			return artImageDataWithStats
 		})
 
-		res.status(200).json({ courses: courseData });
+		res.status(200).json({ artImages: artImageData });
 
 	}
 	catch (error) {
