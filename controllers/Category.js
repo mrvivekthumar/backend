@@ -56,8 +56,6 @@ exports.showAllCategories = async (req, res) => {
     }
 };
 
-//categoryPageDetails 
-
 exports.categoryPageDetails = async (req, res) => {
     try {
         const { categoryId } = req.body;
@@ -123,7 +121,7 @@ exports.categoryPageDetails = async (req, res) => {
         // Flatten all artImages and sort by most sold
         const allartImages = allCategories.flatMap((category) => category.artImages);
 
-        
+
         const mostSellingartImages = allartImages
             .sort((a, b) => b.sold - a.sold)
             .slice(0, 10);

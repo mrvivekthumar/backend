@@ -13,13 +13,13 @@ exports.createRating = async (req, res) => {
         // check if user is enrolled or not
         const artImagesDetails = await ArtImages.findOne({
             _id: artImagesId,
-            studentsEnrolled: { $elemMatch: { $eq: userId } },
+            buyersEnrolled: { $elemMatch: { $eq: userId } },
         });
 
         if (!artImagesDetails) {
             return res.status(404).json({
                 success: false,
-                message: 'Student is not enrolled in the artImages',
+                message: 'Buyers is not enrolled in the artImages',
             });
         }
         // check if user already reviewed the artImages

@@ -2,6 +2,7 @@ const { contactUsEmail } = require("../mail/templates/contactFormRes");
 const mailSender = require("../utils/mailSender");
 const logger = require("../utils/logger");
 
+// method for contactUs controller
 exports.contactUsController = async (req, res) => {
     const { email, firstname, lastname, message, phoneNo, countrycode } = req.body;
     logger.info("Contact form submitted:", req.body);

@@ -9,7 +9,6 @@ const Profile = require("../models/Profile");
 require("dotenv").config();
 const logger = require("../utils/logger");
 
-
 // Signup Controller for Registering Users
 exports.signup = async (req, res) => {
     try {

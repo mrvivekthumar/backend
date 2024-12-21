@@ -14,6 +14,7 @@ exports.resetPasswordToken = async (req, res) => {
                 message: `This Email: ${email} is not Registered With Us Enter a Valid Email `,
             });
         }
+
         const token = crypto.randomBytes(20).toString("hex");
 
         const updatedDetails = await User.findOneAndUpdate(
@@ -24,7 +25,9 @@ exports.resetPasswordToken = async (req, res) => {
             },
             { new: true }
         );
+
         logger.info("DETAILS", updatedDetails);
+
         const url = `http://localhost:3000/update-password/${token}`;
         // const url = `https://study-notion-frontend-wheat.vercel.app/update-password/${token}`;
         // const url = `https://skill-sync-4e5nbglbx-mrvivekthumars-projects.vercel.app/update-password/${token}`;
@@ -60,20 +63,25 @@ exports.resetPassword = async (req, res) => {
                 message: "Password and Confirm Password Does not Match",
             });
         }
+
         const userDetails = await User.findOne({ token: token });
+
         if (!userDetails) {
             return res.json({
                 success: false,
                 message: "Token is Invalid",
             });
         }
+
         if (!(userDetails.resetPasswordExpires > Date.now())) {
             return res.status(403).json({
                 success: false,
                 message: `Token is Expired, Please Regenerate Your Token`,
             });
         }
+        
         const encryptedPassword = await bcrypt.hash(password, 10);
+        
         await User.findOneAndUpdate(
             { token: token },
             { password: encryptedPassword },
