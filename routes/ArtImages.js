@@ -7,14 +7,11 @@ const router = express.Router()
 // Course Controllers Import
 const {
     createArtImage,
-    getAllCourses,
-    getCourseDetails,
-    getFullCourseDetails,
-    editCourse,
-    getInstructorCourses,
-    deleteCourse,
-
-
+    editArtImages,
+    getAllArtImages,
+    getArtImage,
+    getArtistArtImages,
+    deleteArtistImages
 } = require("../controllers/ArtImages")
 
 
@@ -24,20 +21,6 @@ const {
     createCategory,
     categoryPageDetails,
 } = require("../controllers/Category")
-
-// Sections Controllers Import
-const {
-    createSection,
-    updateSection,
-    deleteSection,
-} = require("../controllers/Section")
-
-// Sub-Sections Controllers Import
-const {
-    createSubSection,
-    updateSubSection,
-    deleteSubSection,
-} = require("../controllers/SubSection")
 
 // Rating Controllers Import
 const {
@@ -51,40 +34,24 @@ const {
 } = require("../controllers/CourseProgress");
 
 // Importing Middlewares
-const { auth, isInstructor, isStudent, isAdmin } = require("../middlewares/auth")
+const { auth, isArtist, isStudent, isAdmin, isArtist } = require("../middlewares/auth")
 
 // ********************************************************************************************************
 //                                      Course routes
 // ********************************************************************************************************
 
 // Courses can Only be Created by Instructors
-router.post("/createCourse", auth, isInstructor, createCourse)
-//Add a Section to a Course
-router.post("/addSection", auth, isInstructor, createSection)
-// Update a Section
-router.post("/updateSection", auth, isInstructor, updateSection)
-// Delete a Section
-router.post("/deleteSection", auth, isInstructor, deleteSection)
-// Edit Sub Section
-router.post("/updateSubSection", auth, isInstructor, updateSubSection)
-// Delete Sub Section
-router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
-// Add a Sub Section to a Section
-router.post("/addSubSection", auth, isInstructor, createSubSection)
+router.post("/createArtImage", auth, isArtist, createArtImage)
 // Get all Registered Courses
-router.get("/getAllCourses", getAllCourses)
+router.get("/getAllArtImages", getAllArtImages)
 // Get Details for a Specific Courses
-router.post("/getCourseDetails", getCourseDetails)
-// Get Details for a Specific Courses
-router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.post("/getArtImage", getArtImage)
 // Edit Course routes
-router.post("/editCourse", auth, isInstructor, editCourse)
+router.post("/editArtImages", auth, isArtist, editArtImages)
 // Get all Courses Under a Specific Instructor
-router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses)
+router.get("/getArtistArtImages", auth, isArtist, getArtistArtImages)
 // Delete a Course
-router.delete("/deleteCourse", deleteCourse)
-
-router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
+router.delete("/deleteArtistImages", deleteArtistImages)
 
 // ********************************************************************************************************
 //                                      Category routes (Only by Admin)
