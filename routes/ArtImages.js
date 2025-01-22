@@ -4,14 +4,14 @@ const router = express.Router()
 
 // Import the Controllers
 
-// Course Controllers Import
+// ArtImage Controllers Import
 const {
     createArtImage,
-    editArtImages,
+    editArtImage,
     getAllArtImages,
     getArtImage,
     getArtistArtImages,
-    deleteArtistImages
+    deleteArtistImage
 } = require("../controllers/ArtImages")
 
 
@@ -33,21 +33,21 @@ const {
 const { auth, isArtist, isStudent, isAdmin, isBuyer } = require("../middlewares/auth")
 
 // ********************************************************************************************************
-//                                      Course routes
+//                                      ArtImage routes
 // ********************************************************************************************************
 
-// Courses can Only be Created by Instructors
+// ArtImages can Only be Created by Artists
 router.post("/createArtImage", auth, isArtist, createArtImage)
-// Get all Registered Courses
+// Get all Registered ArtImages
 router.get("/getAllArtImages", getAllArtImages)
-// Get Details for a Specific Courses
+// Get Details for a Specific ArtImages
 router.post("/getArtImage", getArtImage)
-// Edit Course routes
-router.post("/editArtImages", auth, isArtist, editArtImages)
-// Get all Courses Under a Specific Instructor
+// Edit ArtImage routes
+router.post("/editArtImage", auth, isArtist, editArtImage)
+// Get all ArtImages Under a Specific Artist
 router.get("/getArtistArtImages", auth, isArtist, getArtistArtImages)
-// Delete a Course
-router.delete("/deleteArtistImages", deleteArtistImages)
+// Delete a ArtImage
+router.delete("/deleteArtistImage", deleteArtistImage)
 
 // ********************************************************************************************************
 //                                      Category routes (Only by Admin)

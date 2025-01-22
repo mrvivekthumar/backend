@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/User");
+const multer = require("multer");
+const path = require("path");
+
 
 // added a logging library 
 const winston = require("winston");
@@ -50,7 +53,7 @@ exports.auth = async (req, res, next) => {
                     message: 'Your session has expired. Please log in again.',
                 });
             }
-            
+
             logger.error("Token verification failed:", err);
             return res.status(401).json({
                 success: false,
@@ -130,3 +133,28 @@ exports.isAdmin = async (req, res, next) => {
         })
     }
 }
+
+
+// Multer Configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "uploads/"); // Save files in the "uploads" directory
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    },
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/jpg") {
+        cb(null, true);
+    } else {
+        cb(new Error("Only JPEG, PNG, and JPG files are allowed"), false);
+    }
+};
+
+const upload = multer({ storage, fileFilter });
+
+// Export the Multer Middleware
+exports.upload = upload;

@@ -4,6 +4,7 @@ const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 const { convertSecondsToDuration } = require("../utils/secToDuration");
 const logger = require("../utils/logger");
+const { default: mongoose } = require("mongoose");
 
 // Function to create a new artImages
 exports.createArtImage = async (req, res) => {
@@ -17,7 +18,7 @@ exports.createArtImage = async (req, res) => {
             artImageDescription,
             price,
             category,
-            status,
+            status
         } = req.body;
 
         const artImageFile = req.files.artImage;
@@ -120,7 +121,7 @@ exports.createArtImage = async (req, res) => {
 };
 
 // Edit ArtImages Details
-exports.editArtImages = async (req, res) => {
+exports.editArtImage = async (req, res) => {
     try {
         const { artImagesId } = req.body;
         const updates = req.body;
@@ -206,7 +207,7 @@ exports.getArtImage = async (req, res) => {
     try {
         const { artImageId } = req.body;
         const artImage = await ArtImages.findOne({
-            _id: artImageId,
+            _id: new mongoose.Types.ObjectId(artImageId),
         })
             .populate({
                 path: "artist",
@@ -224,7 +225,7 @@ exports.getArtImage = async (req, res) => {
         //   artImagesId
         // );
 
-        if (!artImage || !artImage.length) {
+        if (!artImage || !artImage.artImage) {
             return res.status(400).json({
                 success: false,
                 message: `Could not find artImages with id: ${artImagesId}`,
@@ -276,8 +277,7 @@ exports.getArtistArtImages = async (req, res) => {
     }
 };
 
-
-exports.deleteArtistImages = async (req, res) => {
+exports.deleteArtistImage = async (req, res) => {
     try {
         const { artImageId } = req.body;
 
