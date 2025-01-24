@@ -50,4 +50,4 @@ const ArtImagesSchema = new mongoose.Schema(
     }
 )
 
-module.exports = mongoose.model("ArtImage", ArtImagesSchema);
+module.exports = mongoose.model("ArtImages", ArtImagesSchema);

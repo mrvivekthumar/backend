@@ -6,7 +6,7 @@ const { convertSecondsToDuration } = require("../utils/secToDuration");
 const logger = require("../utils/logger");
 const { default: mongoose } = require("mongoose");
 
-// Function to create a new artImages
+// Create a New artImages
 exports.createArtImage = async (req, res) => {
     try {
         // Get user ID from request object
@@ -172,6 +172,32 @@ exports.editArtImage = async (req, res) => {
     }
 };
 
+// Delete Artist ArtImages Details
+exports.deleteArtistImage = async (req, res) => {
+    try {
+        const { artImageId } = req.body;
+
+        // Find the artImage
+        const artImage = await ArtImages.findByIdAndDelete(artImageId);
+
+        if (!artImage) {
+            return res.status(404).json({ message: "ArtImages not found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "ArtImages deleted successfully",
+        });
+    } catch (error) {
+        logger.error(error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};
+
 // Get ArtImages List
 exports.getAllArtImages = async (req, res) => {
     try {
@@ -272,31 +298,6 @@ exports.getArtistArtImages = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to retrieve artist artImages",
-            error: error.message,
-        });
-    }
-};
-
-exports.deleteArtistImage = async (req, res) => {
-    try {
-        const { artImageId } = req.body;
-
-        // Find the artImage
-        const artImage = await ArtImages.findByIdAndDelete(artImageId);
-
-        if (!artImage) {
-            return res.status(404).json({ message: "ArtImages not found" });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "ArtImages deleted successfully",
-        });
-    } catch (error) {
-        logger.error(error.message);
-        return res.status(500).json({
-            success: false,
-            message: "Server error",
             error: error.message,
         });
     }

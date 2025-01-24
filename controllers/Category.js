@@ -62,16 +62,19 @@ exports.categoryPageDetails = async (req, res) => {
 
         logger.info("Printing category ID:", categoryId);
 
+        console.log("Printing category ID:", categoryId);
 
         // Find the selected category by ID and populate the related artImages and ratingAndReviews
         const selectedCategory = await Category.findById(categoryId)
             .populate({
                 path: "artImages",
-                match: { status: "Published" },
-                populate: "ratingAndReviews",
+                match: { status: "Published" }, // Filter artImages by status
+                populate: {
+                    path: "ratingAndReviews", // Populate the ratingAndReviews for each artImage
+                },
             })
-            .exec()
-
+            .exec();
+            
         // Handle case if category is not found
         if (!selectedCategory) {
             logger.info("Category not found.");
@@ -79,6 +82,7 @@ exports.categoryPageDetails = async (req, res) => {
                 .status(404)
                 .json({ success: false, message: "Category not found" });
         }
+        console.log("Selected category:", selectedCategory);
 
         // Validate that artImages exist for the selected category
         if (selectedCategory.artImages.length === 0 || !Array.isArray(selectedCategory.artImages)) {
