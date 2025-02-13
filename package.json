@@ -18,6 +18,7 @@
     "nodemailer": "^6.9.16",
     "nodemon": "^3.1.9",
     "otp-generator": "^4.0.1",
+    "razorpay": "^2.9.5",
     "winston": "^3.17.0"
   }
 }

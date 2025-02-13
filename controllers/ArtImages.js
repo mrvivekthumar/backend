@@ -198,7 +198,7 @@ exports.deleteArtistImage = async (req, res) => {
     }
 };
 
-// Get ArtImages List
+// Get All ArtImages List
 exports.getAllArtImages = async (req, res) => {
     try {
         const allArtImages = await ArtImages.find(
@@ -245,16 +245,15 @@ exports.getArtImage = async (req, res) => {
             .populate("ratingAndReviews")
             .exec();
 
-        // console.log(
-        //   "###################################### artImages details : ",
-        //   artImagesDetails,
-        //   artImagesId
-        // );
+        console.log(
+            "###################################### artImages details : ",
+            artImageId
+        );
 
         if (!artImage || !artImage.artImage) {
             return res.status(400).json({
                 success: false,
-                message: `Could not find artImages with id: ${artImagesId}`,
+                message: `Could not find artImages with id: ${artImageId}`,
             });
         }
 
@@ -299,6 +298,60 @@ exports.getArtistArtImages = async (req, res) => {
             success: false,
             message: "Failed to retrieve artist artImages",
             error: error.message,
+        });
+    }
+};
+
+// Get One Single ArtImage Details
+exports.getArtImageDetails = async (req, res) => {
+    try {
+        const { artImageId } = req.body;
+        const artImageDetails = await ArtImages.findOne({
+            _id: artImageId,
+        })
+            .populate({
+                path: "artist",
+                populate: {
+                    path: "additionalDetails",
+                },
+            })
+            .populate("category")
+            .populate("ratingAndReviews")
+            .populate({
+                path: "artImageContent",
+                populate: {
+                    path: "subSection",
+                },
+            })
+            .exec();
+        // console.log(
+        //   "###################################### artImage details : ",
+        //   artImageDetails,
+        //   artImageId
+        // );
+        if (!artImageDetails || !artImageDetails.length) {
+            return res.status(400).json({
+                success: false,
+                message: `Could not find artImage with id: ${artImageId}`,
+            });
+        }
+
+        if (artImageDetails.status === "Draft") {
+            return res.status(403).json({
+                success: false,
+                message: `Accessing a draft artImage is forbidden`,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: artImageDetails,
+        });
+    } catch (error) {
+        logger.error(error.message);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
         });
     }
 };
