@@ -123,9 +123,12 @@ exports.createArtImage = async (req, res) => {
 // Edit ArtImages Details
 exports.editArtImage = async (req, res) => {
     try {
-        const { artImagesId } = req.body;
+        const { artImageId } = req.body;
         const updates = req.body;
-        const artImages = await ArtImages.findById(artImagesId);
+        const artImages = await ArtImages.findById(artImageId);
+
+        console.log("ARt Images id     ", artImageId);
+        console.log("ARt Imagessdfdsf", artImages);
 
         if (!artImages) {
             return res.status(404).json({ error: "ArtImages not found" });
@@ -134,25 +137,16 @@ exports.editArtImage = async (req, res) => {
         // Update only the fields that are present in the request body
         for (const key in updates) {
             if (updates.hasOwnProperty(key)) {
-                if (key === "tag" || key === "instructions") {
-                    artImages[key] = JSON.parse(updates[key]);
-                } else {
-                    artImages[key] = updates[key];
-                }
+
+                artImages[key] = updates[key];
             }
         }
 
         await artImages.save();
 
         const updatedArtImages = await ArtImages.findOne({
-            _id: artImagesId,
+            _id: artImageId,
         })
-            .populate({
-                path: "Artist",
-                populate: {
-                    path: "additionalDetails",
-                },
-            })
             .populate("category")
             .populate("ratingAndReviews")
             .exec();
@@ -306,6 +300,8 @@ exports.getArtistArtImages = async (req, res) => {
 exports.getArtImageDetails = async (req, res) => {
     try {
         const { artImageId } = req.body;
+
+        logger.info("###################################### artImage id : ", artImageId);
         const artImageDetails = await ArtImages.findOne({
             _id: artImageId,
         })
