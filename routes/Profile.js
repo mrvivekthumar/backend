@@ -7,6 +7,7 @@ const {
   getAllUserDetails,
   updateDisplayPicture,
   artistDashboard,
+  getEnrolledArtImages
 } = require("../controllers/Profile")
 
 // ********************************************************************************************************
@@ -19,6 +20,7 @@ router.put("/updateProfile", auth, updateProfile)
 router.get("/getUserDetails", auth, getAllUserDetails)
 
 // Get Enrolled Artist
+router.get("/getEnrolledArtImages", auth, getEnrolledArtImages)
 router.put("/updateDisplayPicture", auth, updateDisplayPicture)
 router.get("/artistDashboard", auth, isArtist, artistDashboard)
 
