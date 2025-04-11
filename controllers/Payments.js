@@ -70,6 +70,7 @@ exports.verifyPayment = async(req, res) => {
     const razorpay_order_id = req.body?.razorpay_order_id;
     const razorpay_payment_id = req.body?.razorpay_payment_id;
     const razorpay_signature = req.body?.razorpay_signature;
+    console.log("verifty payment",req.body)
     const artImages = req.body?.artImages;
     const userId = req.user.id;
 
@@ -95,7 +96,6 @@ exports.verifyPayment = async(req, res) => {
 
 }
 
- 
 const enrollBuyers = async(artImages, userId, res) => {
 
     if(!artImages || !userId) {
@@ -125,7 +125,7 @@ const enrollBuyers = async(artImages, userId, res) => {
         const enrolledBuyer = await User.findByIdAndUpdate(userId,
             {$push:{
                 artImages: artImageId,
-                artImageProgress: artImageProgress._id,
+                // artImageProgress: artImageProgress._id,
             }},{new:true})
             
         ///bachhe ko mail send kardo
