@@ -49,6 +49,8 @@ router.get("/getArtistArtImages", auth, isArtist, getArtistArtImages)
 // Delete a ArtImage
 router.delete("/deleteArtistImage", deleteArtistImage)
 
+router.post("/getArtImageDetails", auth, isArtist, editArtImage)
+
 // ********************************************************************************************************
 //                                      Category routes (Only by Admin)
 // ********************************************************************************************************
